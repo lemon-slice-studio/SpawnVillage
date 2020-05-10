@@ -3,7 +3,7 @@ loaderVersion="[31,)"
 [[mods]]
 modId="spawnvillage"
 version="${file.jarVersion}"
-displayName="Spawn Village"
+displayName="Spawn in Village"
 authors="jihuayu"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/spawnvillage"
 description="Player spawn control"
