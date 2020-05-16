@@ -24,7 +24,7 @@ public class SpawnHandler {
         IWorld world = event.getWorld();
         if (world instanceof ServerWorld) {
             if (ModMainConfig.biome.isEmpty()) {
-                BlockPos pos = ((ServerWorld) world).findNearestStructure(ModMainConfig.struct, new BlockPos(0, 60, 0), 1000, false);
+                BlockPos pos = ((ServerWorld) world).findNearestStructure(ModMainConfig.struct, new BlockPos(0, 60, 0), ModMainConfig.structSearchRange, false);
                 if (pos != null) {
                     for (int i = 40; i < 100; i++) {
                         BlockState block = world.getBlockState(pos.add(0, i, 0));
@@ -35,7 +35,7 @@ public class SpawnHandler {
                         }
                     }
                 } else {
-                    ModMain.LOGGER.error(String.format("Could found %s in range 1000m", ModMainConfig.struct));
+                    ModMain.LOGGER.error(String.format("Could found %s in range %dm", ModMainConfig.struct, ModMainConfig.structSearchRange));
                 }
             } else {
                 BlockPos pos = findBiome((ServerWorld) world, ModMainConfig.biome, new BlockPos(0, 0, 0), 0);

@@ -19,8 +19,10 @@ public final class ModMainConfig {
     public static String biome = "";
     public static int biomeSearchStepLong = 64;
     public static int biomeSearchRange = 1600;
+    public static int structSearchRange = 1000;
     private static ConfigValue<String> structCfg;
     private static ForgeConfigSpec.IntValue biomeSearchRangeCfg;
+    private static ForgeConfigSpec.IntValue structSearchRangeCfg;
     private static ForgeConfigSpec.IntValue biomeSearchStepLongCfg;
     private static ConfigValue<String> biomeCfg;
 
@@ -31,7 +33,7 @@ public final class ModMainConfig {
 
     private ModMainConfig(ForgeConfigSpec.Builder builder) {
         structCfg = builder
-                .comment("Struct(namespaced id) player will spawn.","https://minecraft.gamepedia.com/Commands/locate","unless if spawn-biome is define!")
+                .comment("Struct(namespaced id) player will spawn.","https://minecraft.gamepedia.com/Commands/locate","Useless if spawn-biome is defined!")
                 .define("spawn-struct","Village");
 
         biomeCfg = builder
@@ -42,7 +44,9 @@ public final class ModMainConfig {
                 .defineInRange("biome-search-step-long",biomeSearchStepLong,64,320);
 
         biomeSearchRangeCfg = builder
-                .defineInRange("biome-serch-range",biomeSearchRange,640,32000);
+                .defineInRange("biome-search-range",biomeSearchRange,640,32000);
+        structSearchRangeCfg = builder
+                .defineInRange("struct-search-range",structSearchRange,100,32000);
     }
 
     public static void refresh() {
@@ -50,6 +54,7 @@ public final class ModMainConfig {
         biome = biomeCfg.get();
         biomeSearchStepLong = biomeSearchStepLongCfg.get();
         biomeSearchRange = biomeSearchRangeCfg.get();
+        structSearchRange = structSearchRangeCfg.get();
     }
 
     @SubscribeEvent
