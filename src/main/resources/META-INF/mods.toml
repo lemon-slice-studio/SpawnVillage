@@ -1,5 +1,7 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[35,)"
+license="All rights reserved"
+
 [[mods]]
 modId="spawnvillage"
 version="${file.jarVersion}"

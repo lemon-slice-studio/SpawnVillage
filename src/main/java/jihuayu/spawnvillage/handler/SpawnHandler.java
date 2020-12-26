@@ -2,19 +2,17 @@ package jihuayu.spawnvillage.handler;
 
 import jihuayu.spawnvillage.ModMain;
 import jihuayu.spawnvillage.ModMainConfig;
-import mezz.jei.events.PlayerJoinedWorldEvent;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.Objects;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber
 public class SpawnHandler {
@@ -24,12 +22,17 @@ public class SpawnHandler {
         IWorld world = event.getWorld();
         if (world instanceof ServerWorld) {
             if (ModMainConfig.biome.isEmpty()) {
-                BlockPos pos = ((ServerWorld) world).findNearestStructure(ModMainConfig.struct, new BlockPos(0, 60, 0), ModMainConfig.structSearchRange, false);
+                Structure<?> temp = ForgeRegistries.STRUCTURE_FEATURES.getValue(new ResourceLocation(ModMainConfig.struct));
+                if (temp == null) {
+                    ModMain.LOGGER.error(String.format("Error struct name %s", ModMainConfig.struct));
+                    return;
+                }
+                BlockPos pos = ((ServerWorld) world).func_241117_a_(temp, new BlockPos(0, 60, 0), ModMainConfig.structSearchRange, false);
                 if (pos != null) {
                     for (int i = 40; i < 100; i++) {
                         BlockState block = world.getBlockState(pos.add(0, i, 0));
                         if (block.isAir()) {
-                            ((ServerWorld) world).setSpawnPoint(pos.add(0, i, 0));
+                            ((ServerWorld) world).func_241124_a__(pos.add(0, i, 0),0);
                             event.setCanceled(true);
                             return;
                         }
@@ -43,7 +46,7 @@ public class SpawnHandler {
                     for (int i = 40; i < 100; i++) {
                         BlockState block = world.getBlockState(pos.add(0, i, 0));
                         if (block.isAir()) {
-                            ((ServerWorld) world).setSpawnPoint(pos.add(0, i, 0));
+                            ((ServerWorld) world).func_241124_a__(pos.add(0, i, 0),0);
                             event.setCanceled(true);
                             return;
                         }
@@ -56,15 +59,12 @@ public class SpawnHandler {
     }
 
     private static BlockPos findBiome(ServerWorld world, String name, BlockPos pos, int step) {
-        BlockPos ans;
-        if (step > ModMainConfig.biomeSearchRange / ModMainConfig.biomeSearchStepLong) return null;
-        if (Objects.equals(world.getBiome(pos).getRegistryName(), (new ResourceLocation(name)))) {
-            return pos;
+        Biome temp = ForgeRegistries.BIOMES.getValue(new ResourceLocation(ModMainConfig.biome));
+        if (temp == null) {
+            ModMain.LOGGER.error(String.format("Error biome name %s", ModMainConfig.biome));
+            return null;
         } else {
-            ans = findBiome(world, name, pos.add(0, 0, ModMainConfig.biomeSearchStepLong), step + 1);
-            if (ans != null) return ans;
-            ans = findBiome(world, name, pos.add(ModMainConfig.biomeSearchStepLong, 0, 0), step + 1);
-            return ans;
+            return world.func_241116_a_(temp, pos, ModMainConfig.biomeSearchRange, 8);
         }
     }
 }
